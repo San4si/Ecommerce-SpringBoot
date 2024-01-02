@@ -32,14 +32,17 @@ public class SimpleCorsFilter implements Filter {
 
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
-        Map<String, String> map = new HashMap<>();
         String originHeader = request.getHeader("Origin");
+
+        // Especificamos explicitamente os cabeçalhos permitidos
         response.setHeader("Access-Control-Allow-Origin", originHeader);
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
         response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "*");
+        response.setHeader("Access-Control-Allow-Headers",
+                "Origin, X-Requested-With, Content-Type, Accept, Authorization");
 
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        // Verifica se a solicitação é uma solicitação CORS preflight (OPTIONS)
+        if (request.getMethod().equals("OPTIONS")) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             chain.doFilter(req, res);
